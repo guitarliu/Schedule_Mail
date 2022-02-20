@@ -19,7 +19,7 @@
 |API名称|API链接|
 |:--------------------:|:--------------------:|
 |[和风天气](https://dev.qweather.com/docs/api/)|https://dev.qweather.com/docs/api/|
-|有道每日一词|"https://dict.youdao.com/infoline?mode=publish&date=[datetime]&update=auto&apiversion=5.0|
+|有道每日一词|https://dict.youdao.com/infoline?mode=publish&date=[datetime]&update=auto&apiversion=5.0|
 |扇贝每日一词|https://apiv3.shanbay.com/weapps/dailyquote/quote/?date=[datetime]|
 |每日情话|https://api.xygeng.cn/one|
 |每日情话|https://res.abeim.cn/api-text_sweet?export=json|
