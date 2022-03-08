@@ -31,11 +31,11 @@ class OneDayInfo():
         '''
         :city_code: code of city to search
         '''
-        url = "https://devapi.qweather.com/v7/weather/3d?location=%s&key=503f78630621427086cf1f77f612f2f9" % city_code
+        url = "https://devapi.qweather.com/v7/weather/3d?location=%s&key=503f78630621427086cf1f77f612f2f9" % self.city_code
         resp = requests.get(url)
         threedays_weather_info_resp = resp.content.decode('utf-8')
         threedays_weather_info = json.loads(threedays_weather_info_resp)['daily']
-        weather_info = '北京天气预报:\n'
+        weather_info = '天气预报:\n'
         for i in threedays_weather_info:
             weather_info += i['fxDate'] + ", 最高温: " + i['tempMax'] + "℃, 最低温: " + i['tempMin'] + "℃, 白天天气: " + i['textDay'] + ", 晚间天气: " + i['textNight'] + ", 白天风力: " + i['windScaleDay'] + "级, 晚上风力: " + i['windScaleNight'] + "级\n"	
 
