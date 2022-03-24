@@ -5,16 +5,17 @@
 import yagmail, os, requests, datetime, schedule, json, time, logging
 
 class OneDayInfo():
-    def __init__(self, filename, city_code, mail_receiver, personal_contents):
+    def __init__(self, filename, city_code, mail_receiver, personal_contents, today):
         self.filename = filename
         self.city_code = city_code
         self.mail_receiver = mail_receiver
         self.personal_contents = personal_contents
-        self._today = datetime.date.today().isoformat()
+        self.today = today
+
     
     def logging_out(self, exec_error):
         logging.basicConfig(level=logging.DEBUG,
-                            filename="/home/[user]/desktop/schedule_mail/schedule_mail_error.log",
+                            filename="/home/[user]/desktop/Schedule_Mail/schedule_mail_error.log",
                             format="%(asctime)s - %(name)s - %(levelname)-9s - %(filename)-8s : %(lineno)s line - %(message)s",
                             datefmt="%Y-%m-%d %H:%M:%S")
         logging.exception(exec_error)
@@ -31,28 +32,28 @@ class OneDayInfo():
         '''
         :city_code: code of city to search
         '''
-        url = "https://devapi.qweather.com/v7/weather/3d?location=%s&key=503f78630621427086cf1f77f612f2f9" % self.city_code
+        url = "https://devapi.qweather.com/v7/weather/3d?location=%s&key=503f78630621427086cf1f77f612f2f9" % self.city_code.split(":")[1]
         resp = requests.get(url)
         threedays_weather_info_resp = resp.content.decode('utf-8')
         threedays_weather_info = json.loads(threedays_weather_info_resp)['daily']
-        weather_info = '天气预报:\n'
+        weather_info = '%s天气预报:\n' % self.city_code.split(":")[0]
         for i in threedays_weather_info:
             weather_info += i['fxDate'] + ", 最高温: " + i['tempMax'] + "℃, 最低温: " + i['tempMin'] + "℃, 白天天气: " + i['textDay'] + ", 晚间天气: " + i['textNight'] + ", 白天风力: " + i['windScaleDay'] + "级, 晚上风力: " + i['windScaleNight'] + "级\n"	
 
         return weather_info
 
     def get_youdao_oneday_words(self):
-        yd_url = "https://dict.youdao.com/infoline?mode=publish&date=" + self._today + "&update=auto&apiversion=5.0"
-        for record in requests.get(yd_url).json()[self._today]:
+        yd_url = "https://dict.youdao.com/infoline?mode=publish&date=" + self.today + "&update=auto&apiversion=5.0"
+        for record in requests.get(yd_url).json()[self.today]:
             if record['type'] == '壹句':
-                oneday_words = "有道时间: " + self._today + ", 每日一句: " + record['title'] + ", 翻译: " + record['summary']
+                oneday_words = "有道时间: " + self.today + ", 每日一句: " + record['title'] + ", 翻译: " + record['summary']
                 break
         return oneday_words
 
     def get_shanbei_oneday_words(self):
-        sb_url = "https://apiv3.shanbay.com/weapps/dailyquote/quote/?date=" + self._today
+        sb_url = "https://apiv3.shanbay.com/weapps/dailyquote/quote/?date=" + self.today
         record = requests.get(sb_url).json()
-        oneday_words = "扇贝时间: " + self._today + ", 每日一句: " + record['content'] + ", 翻译: " + record['translation']
+        oneday_words = "扇贝时间: " + self.today + ", 每日一句: " + record['content'] + ", 翻译: " + record['translation']
         return oneday_words
 
     def get_loving_words(self):
@@ -105,13 +106,13 @@ class OneDayInfo():
         self.logging_out("Mail-to-%s, 邮件已发送成功!" % self.mail_receiver)
 
 
-
-filename = "/home/[user]/desktop/schedule_mail/.schedule_mailsetting"
-city_code = "101010700"
-mail_receiver = ["email_Address1", "email_Address2"]
-
 if __name__ == "__main__":
-    onedayinfo = OneDayInfo(filename=filename, city_code=city_code, mail_receiver=mail_receiver, personal_contents="message")
+    filename = "/home/[user]/desktop/Schedule_Mail/.schedule_mailsetting"
+    city_code = "北京:101010700"
+    mail_receiver = ["email_Address1", "email_Address2"]
+    today = datetime.date.today().isoformat()
+
+    onedayinfo = OneDayInfo(filename=filename, city_code=city_code, mail_receiver=mail_receiver, personal_contents="message", today=today)
     try:
         weibo_hots = onedayinfo.get_weibo_hot()
         zhihu_hots = onedayinfo.get_zhihu_hot()
